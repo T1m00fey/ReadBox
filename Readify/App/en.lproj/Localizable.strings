@@ -1,0 +1,42 @@
+/* 
+  Localizable.strings
+  Readify
+
+  Created by Тимофей Юдин on 13.11.2024.
+  
+*/
+"signInLabel" = "Sign In";
+"passwordTFPlaceholder" = "Password";
+"signInButton" = "Login";
+"signUpLabel" = "Sign Up";
+"forgotPasswordButton" = "Forgot password?";
+"resetPasswordLink" = "The password reset link has been sent to your email";
+"nameTFPlaceholder" = "Your Name";
+"signUpButton" = "Register";
+"resetPasswordLabel" = "Reset password";
+"resetButton" = "Reset";
+"descriptionLabel" = "Description 📘";
+"readButton" = "Read 📖";
+"nameChangeLabel" = "Name change";
+"changeButton" = "Change";
+"nameChangedAlert" = "Your Name has been successfully changed";
+"passwordChangeLabel" = "Change password";
+"newPasswordTFP" = "New password";
+"newPasswordAgainTFP" = "New password again";
+"passwordChangedAlert" = "Your password has been successfully changed";
+"passwordsMustMuchAlert" = "Passwords must match";
+"settingsLabel" = "Settings";
+"nameLabel" = "Name";
+"signOutLabel" = "Sign Out";
+"deleteLabel" = "Delete";
+"cancelButton" = "Cancel";
+"youSureToSingOut" = "Are you sure you want to sign out?";
+"youSureToDeleteAcc" = "Are you sure you want to delete your account?";
+"youWithUsLabel" = "Already with us";
+"readArticlesLabel" = "Read";
+"languageLabel" = "Language";
+"chooseLanguageLabel" = "Choose language:";
+"favoritesLabel" = "Favorites";
+"noArticlesAddedLabel" = "You haven't added any articles yet";
+"loadMore" = "Load more";
+

@@ -1,0 +1,41 @@
+/* 
+  Localizable.strings
+  Readify
+
+  Created by Тимофей Юдин on 13.11.2024.
+  
+*/
+"signInLabel" = "Вход";
+"passwordTFPlaceholder" = "Пароль";
+"signInButton" = "Войти";
+"signUpLabel" = "Регистрация";
+"forgotPasswordButton" = "Забыли пароль?";
+"resetPasswordLink" = "Ссылка для восстановления пароля отправлена вам на почту";
+"nameTFPlaceholder" = "Ваше Имя";
+"signUpButton" = "Зарегистрироваться";
+"resetPasswordLabel" = "Восстановление пароля";
+"resetButton" = "Восстановить";
+"descriptionLabel" = "Описание 📘";
+"readButton" = "Читать 📖";
+"nameChangeLabel" = "Изменение имени";
+"changeButton" = "Изменить";
+"nameChangedAlert" = "Ваше Имя успешно изменено";
+"passwordChangeLabel" = "Смена пароля";
+"newPasswordTFP" = "Новый пароль";
+"newPasswordAgainTFP" = "Новый пароль еще раз";
+"passwordChangedAlert" = "Ваш пароль успешно изменен";
+"passwordsMustMuchAlert" = "Пароли должны совпадать";
+"settingsLabel" = "Настройки";
+"nameLabel" = "Имя";
+"signOutLabel" = "Выйти";
+"deleteLabel" = "Удалить";
+"cancelButton" = "Отменить";
+"youSureToSingOut" = "Вы действительно хотите выйти?";
+"youSureToDeleteAcc" = "Вы действительно хотите удалить аккаунт?";
+"youWithUsLabel" = "Вы с нами уже";
+"readArticlesLabel" = "Прочитано";
+"languageLabel" = "Язык";
+"chooseLanguageLabel" = "Выберите язык:";
+"favoritesLabel" = "Избранное";
+"noArticlesAddedLabel" = "Пока что вы не добавили ни одной статьи";
+"loadMore" = "Загрузить еще";
