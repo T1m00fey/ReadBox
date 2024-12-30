@@ -54,6 +54,10 @@ struct ArticleView: View {
                         .padding(.top, 16)
                         .shadow(radius: 2)
                     
+                    
+                    
+                    
+                    
 //                    if let isPremium {
 //                        if isPremium {
 //                            Image(systemName: "crown")
