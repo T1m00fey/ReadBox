@@ -21,18 +21,20 @@ struct ArticleView: View {
         if articleImage != nil {
             image = articleImage
         } else {
-            let storage = Storage.storage()
-            let storageRef = storage.reference()
-            
-            let islandRef = storageRef.child("images/\(id).jpg")
-            
-            islandRef.getData(maxSize: 1 * 5012 * 50125) { data, error in
-                if let error = error {
-                    print(error .localizedDescription)
-                } else {
-                    // Data for "images/island.jpg" is returned
-                    self.image = UIImage(data: data!)
-                    StorageManager.shared.saveImage(id: id, image: image ?? UIImage())
+            DispatchQueue.main.async {
+                let storage = Storage.storage()
+                let storageRef = storage.reference()
+                
+                let islandRef = storageRef.child("images/\(id).jpg")
+                
+                islandRef.getData(maxSize: 1 * 5012 * 50125) { data, error in
+                    if let error = error {
+                        print(error .localizedDescription)
+                    } else {
+                        // Data for "images/island.jpg" is returned
+                        self.image = UIImage(data: data!)
+                        StorageManager.shared.saveImage(id: id, image: image ?? UIImage())
+                    }
                 }
             }
         }
@@ -41,32 +43,33 @@ struct ArticleView: View {
     
     var body: some View {
         
-        VStack(spacing: 0) {
+        VStack(spacing: -45) {
             if let image = image {
                 ZStack {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
                         .frame(width: UIScreen.main.bounds.width - 10)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 30))
                         .padding(.top, 16)
                         .shadow(radius: 2)
                     
-                    if let isPremium = isPremium {
-                        if isPremium {
-                            Image(systemName: "crown")
-                                .scaleEffect(1.3)
-                                .frame(width: UIScreen.main.bounds.width - 42, height: 200, alignment: .topTrailing)
-                                .foregroundStyle(Color.white)
-                                .bold()
-                                .shadow(color: Color.black, radius: 1)
-                        }
-                    }
+                    
+//                    if let isPremium {
+//                        if isPremium {
+//                            Image(systemName: "crown")
+//                                .scaleEffect(1.3)
+//                                .frame(width: UIScreen.main.bounds.width - 42, height: 200, alignment: .topTrailing)
+//                                .foregroundStyle(Color.white)
+//                                .bold()
+//                                .shadow(color: Color.black, radius: 1)
+//                        }
+//                    }
                 }
             } else {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .frame(width: UIScreen.main.bounds.width - 10, height: 200)
+                    RoundedRectangle(cornerRadius: 30)
+                        .frame(width: UIScreen.main.bounds.width - 10, height: 250)
                         .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                     
                     ProgressView()
@@ -74,7 +77,7 @@ struct ArticleView: View {
             }
             
             ZStack {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 30)
                     .frame(width: UIScreen.main.bounds.width - 10)
                     .shadow(radius: 2)
                     .foregroundStyle(Color(uiColor: .secondarySystemBackground))
@@ -88,7 +91,9 @@ struct ArticleView: View {
             
         }
         .onAppear{
-            fetchImage()
+            if image == nil {
+                fetchImage()
+            }
         }
         
     }

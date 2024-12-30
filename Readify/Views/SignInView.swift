@@ -29,7 +29,7 @@ struct SignInView: View {
             
             VStack {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 30)
                         .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                         .frame(width: UIScreen.main.bounds.width - 60, height: 250)
                         .shadow(radius: 2)
@@ -117,7 +117,7 @@ struct SignInView: View {
                     }
                     .frame(width: UIScreen.main.bounds.width - 60, height: 50)
                     .background(Color(uiColor: .secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                     .font(.title2)
                     .shadow(radius: viewModel.isButtonEnable ? 2 : 0)
                 }
@@ -133,7 +133,8 @@ struct SignInView: View {
                         viewModel.isSignUpViewPresented = true
                     } label: {
                         Text(LocalizedStringKey("signUpLabel"))
-                            .fontDesign(.monospaced)
+                            .font(.system(size: 18))
+                            .fontDesign(.rounded)
                             .underline()
                     }
                     
@@ -141,7 +142,8 @@ struct SignInView: View {
                         viewModel.isForgotPasswordPresented = true
                     } label: {
                         Text(LocalizedStringKey("forgotPasswordButton"))
-                            .fontDesign(.monospaced)
+                            .font(.system(size: 18))
+                            .fontDesign(.rounded)
                             .underline()
                     }
                     .sheet(isPresented: $viewModel.isForgotPasswordPresented) {
@@ -156,7 +158,7 @@ struct SignInView: View {
         }
         .popup(isPresented: $viewModel.isErrorPopupPresented) {
             Text(viewModel.errorText)
-                .frame(width: UIScreen.main.bounds.width - 72)
+                .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
                 .foregroundStyle(Color.white)
@@ -172,7 +174,7 @@ struct SignInView: View {
         }
         .popup(isPresented: $viewModel.isSuccessPopupPresented) {
             Text(LocalizedStringKey("resetPasswordLink"))
-                .frame(width: UIScreen.main.bounds.width - 72)
+                .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
                 .foregroundStyle(Color.white)

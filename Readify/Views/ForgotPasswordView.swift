@@ -26,7 +26,7 @@ struct ForgotPasswordView: View {
                 
                 VStack {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 30)
                             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                             .frame(width: UIScreen.main.bounds.width - 60, height: 150)
                             .shadow(radius: 2)
@@ -98,7 +98,7 @@ struct ForgotPasswordView: View {
                         }
                         .frame(width: UIScreen.main.bounds.width - 60, height: 50)
                         .background(Color(uiColor: .secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                         .font(.title2)
                         .shadow(radius: viewModel.isButtonEnabled ? 2 : 0)
                     }
@@ -108,7 +108,7 @@ struct ForgotPasswordView: View {
             }
             .popup(isPresented: $viewModel.isErrorPopupPresented) {
                 Text(viewModel.errorText)
-                    .frame(width: UIScreen.main.bounds.width - 72)
+                    .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
                     .foregroundStyle(Color.white)

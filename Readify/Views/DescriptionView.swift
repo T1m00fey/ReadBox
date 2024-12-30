@@ -30,6 +30,7 @@ struct DescriptionView: View {
                 .frame(width: UIScreen.main.bounds.width - 32, alignment: .leading)
                 .font(.title3)
                 .padding(.top, 5)
+                .fontDesign(.rounded)
             
             Button {
                 isReadViewPresented = true

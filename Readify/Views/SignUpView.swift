@@ -29,7 +29,7 @@ struct SignUpView: View {
             
             VStack {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 30)
                         .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                         .frame(width: UIScreen.main.bounds.width - 60, height: 330)
                         .shadow(radius: 2)
@@ -131,7 +131,7 @@ struct SignUpView: View {
                     }
                     .frame(width: UIScreen.main.bounds.width - 60, height: 50)
                     .background(Color(uiColor: .secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                     .font(.title2)
                     .shadow(radius: viewModel.isButtonEnable ? 2 : 0)
                 }
@@ -163,7 +163,7 @@ struct SignUpView: View {
                 } label: {
                     Text(LocalizedStringKey("signInLabel"))
                         .font(.title3)
-                        .fontDesign(.monospaced)
+                        .fontDesign(.rounded)
                         .underline()
                 }
                 .padding(.bottom, 20)

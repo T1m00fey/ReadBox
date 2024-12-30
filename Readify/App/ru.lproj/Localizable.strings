@@ -22,6 +22,7 @@
 "nameChangedAlert" = "Ваше Имя успешно изменено";
 "passwordChangeLabel" = "Смена пароля";
 "newPasswordTFP" = "Новый пароль";
+"oldPasswordTFP" = "Старый пароль";
 "newPasswordAgainTFP" = "Новый пароль еще раз";
 "passwordChangedAlert" = "Ваш пароль успешно изменен";
 "passwordsMustMuchAlert" = "Пароли должны совпадать";
@@ -39,3 +40,10 @@
 "favoritesLabel" = "Избранное";
 "noArticlesAddedLabel" = "Пока что вы не добавили ни одной статьи";
 "loadMore" = "Загрузить еще";
+"memorySettingsLabel" = "Память и данные";
+"dataInMemoryLabel" = "Использование памяти";
+"clearCacheButton" = "Очистить весь кэш";
+"cacheClearedAlert" = "Кэш успешно очищен";
+"someArticlesNotFoundLabel" = "Некоторые статьи не найдены";
+"fontLabel" = "Размер шрифта";
+"loadDataErrorText" = "Не удалось загрузить данные";

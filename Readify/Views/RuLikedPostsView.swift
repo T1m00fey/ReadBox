@@ -11,10 +11,12 @@ import SwiftUI
 final class RuLikedPostsViewModel: ObservableObject {
     @Published var isReadViewPresented = false
     @Published var articles: [RuArticle] = []
-    @Published var likedPostsIndexes: [String] = []
     @Published var errorText = ""
     @Published var isErrorPopupPresented = false
     @Published var isDescriptionPopupPresented = false
+    @Published var user: DBUser? = nil
+    @Published var likedPosts: [String] = []
+    @Published var articlesRead = 0
     
     var description = ""
     var title = ""
@@ -23,19 +25,31 @@ final class RuLikedPostsViewModel: ObservableObject {
     var text = ""
     var likesCount = 0
     var id = ""
+    var userId = ""
     
-    func loadLikedPosts() async throws {
+    func getArticle(id: String) async throws -> RuArticle {
+        try await ArticlesManager.shared.getRuArticle(id: id)
+    }
+    
+    func loadUser() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
         let user = try await UserManager.shared.getUser(userId: authDataResult.uid)
         
-        self.likedPostsIndexes = user.likedPosts ?? []
+        self.user = user
     }
     
     func getArticles() async throws {
         articles = []
         
-        for index in likedPostsIndexes {
-            articles.append(try await ArticlesManager.shared.getRuArticle(id: index))
+        for index in likedPosts {
+            do {
+                articles.append(try await ArticlesManager.shared.getRuArticle(id: index))
+            } catch {
+                withAnimation {
+                    errorText = NSLocalizedString("someArticlesNotFoundLabel", comment: "")
+                    isErrorPopupPresented = true
+                }
+            }
         }
     }
 }
@@ -75,14 +89,28 @@ struct RuLikedPostsView: View {
                                 .onTapGesture {
                                     viewModel.description = article.ruDescription ?? ""
                                     viewModel.title = article.ruTitle ?? ""
-                                    viewModel.text =  article.ruText ?? ""
+                                    viewModel.text = article.ruText ?? ""
                                     viewModel.image = StorageManager.shared.getImage(id: article.id) ?? UIImage()
                                     viewModel.dateCreated = article.dateCreated ?? Date()
                                     viewModel.likesCount = article.likesCount ?? 0
                                     viewModel.id = article.id
                                     
-                                    
-                                    viewModel.isDescriptionPopupPresented = true
+                                    if viewModel.user != nil {
+                                        if viewModel.articlesRead == 0 {
+                                            viewModel.articlesRead = viewModel.user?.articlesRead ?? 0
+                                        }
+                                        
+                                        if viewModel.userId == "" {
+                                            viewModel.userId = viewModel.user?.userId ?? ""
+                                        }
+                                        
+                                        viewModel.isDescriptionPopupPresented = true
+                                    } else {
+                                        withAnimation {
+                                            viewModel.errorText = NSLocalizedString("loadDataErrorText", comment: "")
+                                            viewModel.isErrorPopupPresented = true
+                                        }
+                                    }
                                 }
                                 .padding(.top, 10)
                         }
@@ -94,9 +122,14 @@ struct RuLikedPostsView: View {
             .padding(.top, 10)
             .refreshable {
                 Task {
+                    try? await viewModel.loadUser()
+                }
+            }
+            .onChange(of: viewModel.likedPosts, perform: { newValue in
+                if viewModel.likedPosts != [] {
                     Task {
                         do {
-                            try await viewModel.loadLikedPosts()
+                            try await viewModel.getArticles()
                             return
                         } catch {
                             withAnimation {
@@ -106,20 +139,8 @@ struct RuLikedPostsView: View {
                         
                         viewModel.isErrorPopupPresented = true
                     }
-                }
-            }
-            .onChange(of: viewModel.likedPostsIndexes, perform: { newValue in
-                Task {
-                    do {
-                        try await viewModel.getArticles()
-                        return
-                    } catch {
-                        withAnimation {
-                            viewModel.errorText = error.localizedDescription
-                        }
-                    }
-                    
-                    viewModel.isErrorPopupPresented = true
+                } else {
+                    viewModel.articles = []
                 }
             })
             .popup(isPresented: $viewModel.isDescriptionPopupPresented) {
@@ -137,18 +158,19 @@ struct RuLikedPostsView: View {
             .fullScreenCover(isPresented: $viewModel.isReadViewPresented, content: {
                 ReadView(
                     id: viewModel.id,
+                    userId: viewModel.userId,
                     title: viewModel.title,
                     text: viewModel.text,
                     image: viewModel.image,
                     dateCreated: viewModel.dateCreated,
                     likesCount: viewModel.likesCount,
-                    likedPosts: $viewModel.likedPostsIndexes
-                    
+                    articlesRead: $viewModel.articlesRead,
+                    likedPosts: $viewModel.likedPosts
                 )
             })
             .popup(isPresented: $viewModel.isErrorPopupPresented) {
                 Text(viewModel.errorText)
-                    .frame(width: UIScreen.main.bounds.width - 72)
+                    .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
                     .foregroundStyle(Color.white)
@@ -164,17 +186,18 @@ struct RuLikedPostsView: View {
                     .autohideIn(5)
             }
             .onAppear {
-                if viewModel.likedPostsIndexes == [] {
+                if viewModel.user == nil {
                     Task {
-                        do {
-                            try await viewModel.loadLikedPosts()
-                            return
-                        } catch {
-                            withAnimation {
-                                viewModel.errorText = error.localizedDescription
-                            }
-                        }
-                        
+                        try? await viewModel.loadUser()
+                    }
+                }
+            }
+            .onChange(of: viewModel.user) { newValue in
+                if viewModel.user?.likedPosts != nil {
+                    viewModel.likedPosts = viewModel.user?.likedPosts ?? []
+                } else {
+                    withAnimation {
+                        viewModel.errorText = NSLocalizedString("loadErrorText", comment: "")
                         viewModel.isErrorPopupPresented = true
                     }
                 }
@@ -206,6 +229,3 @@ struct RuLikedPostsView: View {
     }
 }
 
-#Preview {
-    RuLikedPostsView()
-}

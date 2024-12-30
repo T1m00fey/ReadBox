@@ -11,10 +11,13 @@ import SwiftUI
 final class EnLikedPostsViewModel: ObservableObject {
     @Published var isReadViewPresented = false
     @Published var articles: [EnArticle] = []
-    @Published var likedPostsIndexes: [String] = []
     @Published var errorText = ""
     @Published var isErrorPopupPresented = false
     @Published var isDescriptionPopupPresented = false
+    @Published var likedPosts: [String] = []
+    @Published var articlesRead = 0
+    
+    @Published var user: DBUser? = nil
     
     var description = ""
     var title = ""
@@ -23,19 +26,27 @@ final class EnLikedPostsViewModel: ObservableObject {
     var text = ""
     var likesCount = 0
     var id = ""
+    var userId = ""
     
-    func loadLikedPosts() async throws {
+    func loadUser() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
         let user = try await UserManager.shared.getUser(userId: authDataResult.uid)
         
-        self.likedPostsIndexes = user.likedPosts ?? []
+        self.user = user
     }
     
     func getArticles() async throws {
         articles = []
         
-        for index in likedPostsIndexes {
-            articles.append(try await ArticlesManager.shared.getEnArticle(id: index))
+        for index in likedPosts {
+            do {
+                articles.append(try await ArticlesManager.shared.getEnArticle(id: index))
+            } catch {
+                withAnimation {
+                    errorText = NSLocalizedString("someArticlesNotFoundLabel", comment: "")
+                    isErrorPopupPresented = true
+                }
+            }
         }
     }
 }
@@ -73,16 +84,31 @@ struct EnLikedPostsView: View {
                         ForEach(viewModel.articles) { article in
                             ArticleView(id: article.id, title: article.enTitle, isPremium: article.isPremium)
                                 .onTapGesture {
-                                    viewModel.description = article.enDescription ?? ""
-                                    viewModel.title = article.enTitle ?? ""
-                                    viewModel.text =  article.enText ?? ""
+                                    viewModel.description = article.enDescription ?? "Not found"
+                                    viewModel.title = article.enTitle ?? "Not found"
+                                    viewModel.text =  article.enText ?? "Not found"
                                     viewModel.image = StorageManager.shared.getImage(id: article.id) ?? UIImage()
                                     viewModel.dateCreated = article.dateCreated ?? Date()
                                     viewModel.likesCount = article.likesCount ?? 0
                                     viewModel.id = article.id
                                     
                                     
-                                    viewModel.isDescriptionPopupPresented = true
+                                    if viewModel.user != nil {
+                                        if viewModel.articlesRead == 0 {
+                                            viewModel.articlesRead = viewModel.user?.articlesRead ?? 0
+                                        }
+                                        
+                                        if viewModel.userId == "" {
+                                            viewModel.userId = viewModel.user?.userId ?? ""
+                                        }
+                                        
+                                        viewModel.isDescriptionPopupPresented = true
+                                    } else {
+                                        withAnimation {
+                                            viewModel.errorText = NSLocalizedString("loadDataErrorText", comment: "")
+                                            viewModel.isErrorPopupPresented = true
+                                        }
+                                    }
                                 }
                                 .padding(.top, 10)
                         }
@@ -94,30 +120,23 @@ struct EnLikedPostsView: View {
             .padding(.top, 10)
             .refreshable {
                 Task {
+                    try? await viewModel.loadUser()
+                }
+            }
+            .onChange(of: viewModel.likedPosts, perform: { newValue in
+                if viewModel.likedPosts != [] {
                     Task {
                         do {
-                            try await viewModel.loadLikedPosts()
+                            try await viewModel.getArticles()
                             return
                         } catch {
-                            withAnimation {
-                                viewModel.errorText = error.localizedDescription
-                            }
+                            viewModel.errorText = error.localizedDescription
                         }
                         
                         viewModel.isErrorPopupPresented = true
                     }
-                }
-            }
-            .onChange(of: viewModel.likedPostsIndexes, perform: { newValue in
-                Task {
-                    do {
-                        try await viewModel.getArticles()
-                        return
-                    } catch {
-                        viewModel.errorText = error.localizedDescription
-                    }
-                    
-                    viewModel.isErrorPopupPresented = true
+                } else {
+                    viewModel.articles = []
                 }
             })
             .popup(isPresented: $viewModel.isDescriptionPopupPresented) {
@@ -132,21 +151,32 @@ struct EnLikedPostsView: View {
                     .appearFrom(.bottomSlide)
                     .dragToDismiss(true)
             }
+            .onChange(of: viewModel.user?.likedPosts) { newValue in
+                if viewModel.user?.likedPosts != nil {
+                    viewModel.likedPosts = viewModel.user?.likedPosts ?? []
+                } else {
+                    withAnimation {
+                        viewModel.errorText = NSLocalizedString("loadErrorText", comment: "")
+                        viewModel.isErrorPopupPresented = true
+                    }
+                }
+            }
             .fullScreenCover(isPresented: $viewModel.isReadViewPresented, content: {
                 ReadView(
                     id: viewModel.id,
+                    userId: viewModel.userId,
                     title: viewModel.title,
                     text: viewModel.text,
                     image: viewModel.image,
                     dateCreated: viewModel.dateCreated,
                     likesCount: viewModel.likesCount,
-                    likedPosts: $viewModel.likedPostsIndexes
-                    
+                    articlesRead: $viewModel.articlesRead,
+                    likedPosts: $viewModel.likedPosts
                 )
             })
             .popup(isPresented: $viewModel.isErrorPopupPresented) {
                 Text(viewModel.errorText)
-                    .frame(width: UIScreen.main.bounds.width - 72)
+                    .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
                     .foregroundStyle(Color.white)
@@ -162,18 +192,9 @@ struct EnLikedPostsView: View {
                     .autohideIn(5)
             }
             .onAppear {
-                if viewModel.likedPostsIndexes == [] {
+                if viewModel.user == nil {
                     Task {
-                        do {
-                            try await viewModel.loadLikedPosts()
-                            return
-                        } catch {
-                            withAnimation {
-                                viewModel.errorText = error.localizedDescription
-                            }
-                        }
-                        
-                        viewModel.isErrorPopupPresented = true
+                        try? await viewModel.loadUser()
                     }
                 }
             }

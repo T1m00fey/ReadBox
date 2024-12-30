@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C4AC6C172D11C0AE005138D5 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = C4AC6C162D11C0AE005138D5 /* MarkdownUI */; };
 		C4D2497B2CE4B042000C3C9A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C4D2497A2CE4B042000C3C9A /* FirebaseAnalytics */; };
 		C4D2497D2CE4B058000C3C9A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C4D2497C2CE4B058000C3C9A /* FirebaseAuth */; };
 		C4D2497F2CE4B05D000C3C9A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = C4D2497E2CE4B05D000C3C9A /* FirebaseStorage */; };
@@ -48,6 +49,7 @@
 				C4D2497B2CE4B042000C3C9A /* FirebaseAnalytics in Frameworks */,
 				C4D249812CE4B064000C3C9A /* FirebaseFirestore in Frameworks */,
 				C4D249842CE4B09C000C3C9A /* PopupView in Frameworks */,
+				C4AC6C172D11C0AE005138D5 /* MarkdownUI in Frameworks */,
 				C4D2497D2CE4B058000C3C9A /* FirebaseAuth in Frameworks */,
 				C4D2497F2CE4B05D000C3C9A /* FirebaseStorage in Frameworks */,
 			);
@@ -106,6 +108,7 @@
 				C4D2497E2CE4B05D000C3C9A /* FirebaseStorage */,
 				C4D249802CE4B064000C3C9A /* FirebaseFirestore */,
 				C4D249832CE4B09C000C3C9A /* PopupView */,
+				C4AC6C162D11C0AE005138D5 /* MarkdownUI */,
 			);
 			productName = Readify;
 			productReference = C46A20A02CCE436600822319 /* Readify.app */;
@@ -139,6 +142,7 @@
 			packageReferences = (
 				C4D249792CE4B042000C3C9A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C4D249822CE4B09C000C3C9A /* XCRemoteSwiftPackageReference "PopupView" */,
+				C4AC6C152D11C0AE005138D5 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C46A20A12CCE436600822319 /* Products */;
@@ -308,6 +312,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
@@ -316,7 +321,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Readify.Tim;
+				PRODUCT_BUNDLE_IDENTIFIER = ReadBox.Tim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -344,6 +349,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
@@ -352,7 +358,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Readify.Tim;
+				PRODUCT_BUNDLE_IDENTIFIER = ReadBox.Tim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -388,6 +394,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C4AC6C152D11C0AE005138D5 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.4.1;
+			};
+		};
 		C4D249792CE4B042000C3C9A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -407,6 +421,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C4AC6C162D11C0AE005138D5 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4AC6C152D11C0AE005138D5 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
 		C4D2497A2CE4B042000C3C9A /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C4D249792CE4B042000C3C9A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

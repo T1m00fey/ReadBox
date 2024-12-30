@@ -8,23 +8,12 @@
 import SwiftUI
 import MarkdownUI
 
-final class TestReadViewModel: ObservableObject {
+final class ReadViewModel: ObservableObject {
     @Published var timeLeft = 60
     @Published var isPostLiked = false
     @Published var errorText = ""
     @Published var isErrorPopupPresented = false
     @Published var likesCount = 0
-    
-    @Published var user: DBUser? = nil
-    
-    func loadCurrentUser() async throws {
-        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        let user = try await UserManager.shared.getUser(userId: authDataResult.uid)
-        
-        DispatchQueue.main.async {
-            self.user = user
-        }
-    }
     
     func plusReadArticle(userId: String, articlesRead: Int) async throws {
         try await UserManager.shared.plusReadArticle(userId: userId, articlesRead: articlesRead)
@@ -111,17 +100,19 @@ final class TestReadViewModel: ObservableObject {
     }
 }
 
-struct TestReadView: View {
+struct ReadView: View {
     let id: String
+    let userId: String
     let title: String
     let text: String
     let image: UIImage
     let dateCreated: Date
     let likesCount: Int
     
+    @Binding var articlesRead: Int
     @Binding var likedPosts: [String]
     
-    @StateObject var viewModel = TestReadViewModel()
+    @StateObject var viewModel = ReadViewModel()
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -175,7 +166,7 @@ struct TestReadView: View {
                                     
                                     Task {
                                         do {
-                                            try await viewModel.removeLikedPost(userId: viewModel.user?.userId ?? "", articleId: id)
+                                            try await viewModel.removeLikedPost(userId: userId, articleId: id)
                                             try await viewModel.updateLikes(at: id, likesCount: viewModel.likesCount)
                                             return
                                         } catch {
@@ -199,7 +190,7 @@ struct TestReadView: View {
                                     
                                     Task {
                                         do {
-                                            try await viewModel.addLikedPost(userId: viewModel.user?.userId ?? "", articleId: id)
+                                            try await viewModel.addLikedPost(userId: userId, articleId: id)
                                             try await viewModel.updateLikes(at: id, likesCount: viewModel.likesCount)
                                             return
                                         } catch {
@@ -226,6 +217,9 @@ struct TestReadView: View {
                         VStack(alignment: .leading) {
                             ForEach(viewModel.parseTextSections(text), id: \.self) { part in
                                 Markdown(part)
+                                    .font(.title2)
+                                    .fontDesign(.rounded)
+                                    .padding(.top, 15)
                             }
                         }
                         .padding(.horizontal, 16)
@@ -241,12 +235,6 @@ struct TestReadView: View {
                     viewModel.likesCount = likesCount
                     
                     viewModel.timeLeft = 60
-                    
-                    if viewModel.user == nil {
-                        Task {
-                            try? await viewModel.loadCurrentUser()
-                        }
-                    }
                 }
                 .onReceive(timer, perform: { _ in
                     if viewModel.timeLeft > 0 {
@@ -255,12 +243,11 @@ struct TestReadView: View {
                 })
                 .onDisappear {
                     if viewModel.timeLeft == 0 {
-                        if let articlesRead = viewModel.user?.articlesRead, let userId = viewModel.user?.userId {
-                            Task {
-                                try await viewModel.plusReadArticle(userId: userId, articlesRead: articlesRead)
-                            }
+                        Task {
+                            try await viewModel.plusReadArticle(userId: userId, articlesRead: articlesRead)
+
                         }
-                        
+                        articlesRead += 1
                     }
                 }
                 .popup(isPresented: $viewModel.isErrorPopupPresented) {
@@ -314,7 +301,7 @@ struct TestReadView: View {
 }
 
 #Preview {
-    ReadView(id: "", title: "", text: "", image: UIImage(), dateCreated: Date(), likesCount: 0, likedPosts: .constant([]))
+    ReadView(id: "", userId: "", title: "", text: "", image: UIImage(), dateCreated: Date(), likesCount: 0, articlesRead: .constant(0), likedPosts: .constant([]))
 }
 
 

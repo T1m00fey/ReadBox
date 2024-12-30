@@ -12,7 +12,7 @@ final class NewPasswordViewModel: ObservableObject {
     @Published var isButtonEnable = false
 
     @Published var newPassword = ""
-    @Published var repeatNewPassword = ""
+    @Published var oldPassword = ""
     @Published var errorText = ""
     
     @Published var isErrorPopupPresented = false
@@ -31,9 +31,13 @@ final class NewPasswordViewModel: ObservableObject {
         try await AuthenticationManager.shared.updatePassword(to: newPassword)
     }
     
+    func signIn(email: String) async throws {
+        try await AuthenticationManager.shared.signInUser(withEmail: email, andPassword: oldPassword)
+    }
+    
     func isChangeButtonEnabled() {
         withAnimation {
-            if newPassword.count > 0 && repeatNewPassword.count > 0 {
+            if newPassword.count > 0 && oldPassword.count > 0 {
                 isButtonEnable = true
             }
         }

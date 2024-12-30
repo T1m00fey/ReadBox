@@ -5,7 +5,7 @@
 //  Created by Тимофей Юдин on 05.11.2024.
 //
 
-import Foundation
+import SwiftUI
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -16,6 +16,8 @@ final class ProfileViewModel: ObservableObject {
     @Published var isSuccessPopupPresented = false
     @Published var isLanguagePopupPresented = false
     @Published var isErrorPopupPresented = false
+    @Published var isMemorySettingsPopupPresented = false
+    @Published var sizeOfData: Double = 0
     
     @Published var successText = ""
     @Published var errorText = ""
@@ -53,6 +55,24 @@ final class ProfileViewModel: ObservableObject {
                 return "days"
             }
         }
+    }
+    
+    func getUserDefaultsSize() {
+        var totalSize = 0
+        
+        // Получаем все ключи в UserDefaults
+        let dictionary = UserDefaults.standard.dictionaryRepresentation()
+        
+        // Для каждого значения в UserDefaults
+        for (_, value) in dictionary {
+            if let data = try? NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: false) {
+                totalSize += data.count // Суммируем размеры данных
+            }
+        }
+        
+        // Переводим размер в мегабайты (MB)
+        let sizeInMB = Double(totalSize) / (1024 * 1024)
+        sizeOfData = sizeInMB
     }
     
     func getStringOf(articlesRead: Int) -> String {

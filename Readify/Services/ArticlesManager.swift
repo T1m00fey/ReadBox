@@ -102,7 +102,7 @@ final class ArticlesManager {
         try await articleDocument(id: articleId).updateData(data)
     }
     
-    func getAllEnArticles() async throws -> [EnArticle] {
+    func getAllEnArticles() async throws -> [EnArticle?] {
         let snapshot = try await articlesCollection.getDocuments()
         
         var articles: [EnArticle] = []
@@ -115,7 +115,7 @@ final class ArticlesManager {
         return articles
     }
     
-    func getAllRuArticles() async throws -> [RuArticle] {
+    func getAllRuArticles() async throws -> [RuArticle?] {
         let snapshot = try await articlesCollection.getDocuments()
         
         var articles: [RuArticle] = []

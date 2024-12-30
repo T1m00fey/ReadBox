@@ -8,78 +8,6 @@
 import SwiftUI
 import FirebaseStorage
 
-@MainActor
-final class EnFeedViewModel: ObservableObject {
-    @Published var topArticlesIndexes: [String] = []
-    @Published var topArticles: [EnArticle] = []
-    @Published var articles: [EnArticle] = []
-    @Published var errorText = ""
-    @Published var isErrorPopupPresented = false
-    @Published var images: [UIImage?] = []
-    @Published var isDescriptionPopupPresented = false
-    @Published var isReadViewPresented = false
-    @Published var likedPosts: [String] = []
-    @Published var fromIndex = 0
-    @Published var maxIndex = ""
-    
-    func loadLikedPosts() async throws {
-        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        let user = try await UserManager.shared.getUser(userId: authDataResult.uid)
-        
-        self.likedPosts = user.likedPosts ?? []
-    }
-    
-    func getMaxIndex() async throws {
-        maxIndex = try await ArticlesManager.shared.getMaxIndex() ?? "10"
-    }
-    
-    var description = ""
-    var title = ""
-    var image = UIImage()
-    var dateCreated = Date()
-    var text = ""
-    var likesCount = 0
-    var id = ""
-    
-    func getArticle(id: String) async throws -> EnArticle {
-        try await ArticlesManager.shared.getEnArticle(id: id)
-    }
-    
-    func getTopArticles() async throws {
-        Task {
-            do {
-                topArticles = []
-                
-                for index in topArticlesIndexes {
-                    topArticles.append(try await getArticle(id: index))
-                }
-                
-                return
-            } catch {
-                withAnimation {
-                    errorText = error.localizedDescription
-                }
-            }
-            
-            isErrorPopupPresented = true
-        }
-    }
-    
-    func getTopIndexes() async throws {
-        topArticlesIndexes = try await ArticlesManager.shared.getTopArticlesIndexes() ?? ["0"]
-    }
-    
-    func getArticles() async throws {
-        for index in fromIndex...fromIndex + 9 {
-            if !topArticlesIndexes.contains(String(index)) && index <= Int(maxIndex) ?? 10 {
-                articles.append(try await getArticle(id: String(index)))
-            }
-        }
-        
-        fromIndex += 10
-    }
-}
-
 struct EnFeedView: View {
     @StateObject var viewModel = EnFeedViewModel()
     
@@ -98,7 +26,7 @@ struct EnFeedView: View {
                         
                         TabView {
                             
-                            ForEach(viewModel.topArticles, id: \.self) { article in
+                            ForEach(viewModel.topArticles) { article in
                                 TopArticleView(id: article.id, title: article.enTitle, isPremium: article.isPremium)
                                     .onTapGesture {
                                         viewModel.description = article.enDescription ?? ""
@@ -109,7 +37,23 @@ struct EnFeedView: View {
                                         viewModel.likesCount = article.likesCount ?? 0
                                         viewModel.id = article.id
                                         
-                                        viewModel.isDescriptionPopupPresented = true
+                                        if viewModel.user != nil {
+                                            if viewModel.likedPosts == [] && viewModel.articlesRead == 0 {
+                                                viewModel.likedPosts = viewModel.user?.likedPosts ?? []
+                                                viewModel.articlesRead = viewModel.user?.articlesRead ?? 0
+                                            }
+                                            
+                                            if viewModel.userId == "" {
+                                                viewModel.userId = viewModel.user?.userId ?? ""
+                                            }
+                                            
+                                            viewModel.isDescriptionPopupPresented = true
+                                        } else {
+                                            withAnimation {
+                                                viewModel.errorText = NSLocalizedString("loadDataErrorText", comment: "")
+                                                viewModel.isErrorPopupPresented = true
+                                            }
+                                        }
                                     }
                                     .tabItem {}
                             }
@@ -119,7 +63,7 @@ struct EnFeedView: View {
                         .frame(height: 270)
                         .padding(.top, 20)
                         
-                        ForEach(viewModel.articles, id: \.self) { article in
+                        ForEach(viewModel.articles) { article in
                             ArticleView(
                                 id: article.id,
                                 title: article.enTitle,
@@ -127,20 +71,36 @@ struct EnFeedView: View {
                             )
                             .padding(.top, 10)
                             .onTapGesture {
-                                viewModel.description = article.enDescription ?? ""
-                                viewModel.title = article.enTitle ?? ""
-                                viewModel.text = article.enText ?? ""
+                                viewModel.description = article.enDescription ?? "Not found"
+                                viewModel.title = article.enTitle ?? "Not found"
+                                viewModel.text = article.enText ?? "Not found"
                                 viewModel.image = StorageManager.shared.getImage(id: article.id) ?? UIImage()
                                 viewModel.dateCreated = article.dateCreated ?? Date()
                                 viewModel.likesCount = article.likesCount ?? 0
                                 viewModel.id = article.id
                                 
-                                viewModel.isDescriptionPopupPresented = true
+                                if viewModel.user != nil {
+                                    if viewModel.likedPosts == [] && viewModel.articlesRead == 0 {
+                                        viewModel.likedPosts = viewModel.user?.likedPosts ?? []
+                                        viewModel.articlesRead = viewModel.user?.articlesRead ?? 0
+                                    }
+                                    
+                                    if viewModel.userId == "" {
+                                        viewModel.userId = viewModel.user?.userId ?? ""
+                                    }
+                                    
+                                    viewModel.isDescriptionPopupPresented = true
+                                } else {
+                                    withAnimation {
+                                        viewModel.errorText = NSLocalizedString("loadDataErrorText", comment: "")
+                                        viewModel.isErrorPopupPresented = true
+                                    }
+                                }
                             }
                             
                         }
                         
-                        if viewModel.articles != [] && Int(viewModel.maxIndex) ?? 10 >= viewModel.fromIndex {
+                        if viewModel.articles != [] && viewModel.fromIndex >= 0 {
                             Button {
                                 Task {
                                     do {
@@ -159,10 +119,12 @@ struct EnFeedView: View {
                                     Image(systemName: "arrow.down")
                                         .foregroundStyle(Color(uiColor: .label))
                                         .font(.title3)
+                                        .fontWeight(.light)
                                     
                                     Text(LocalizedStringKey("loadMore"))
                                         .font(.title3)
                                         .fontDesign(.rounded)
+                                        .fontWeight(.light)
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 10)
@@ -181,7 +143,7 @@ struct EnFeedView: View {
                 .padding(.top, 10)
                 .popup(isPresented: $viewModel.isErrorPopupPresented) {
                     Text(viewModel.errorText)
-                        .frame(width: UIScreen.main.bounds.width - 72)
+                        .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 16)
                         .foregroundStyle(Color.white)
@@ -244,20 +206,23 @@ struct EnFeedView: View {
                 }
                 .onAppear {
                     Task {
-                        try? await viewModel.loadLikedPosts()
+                        try? await viewModel.loadUser()
                     }
                     
-                    Task {
-                        do {
-                            try await viewModel.getMaxIndex()
-                            return
-                        } catch {
-                            withAnimation {
-                                viewModel.errorText = error.localizedDescription
+                    if viewModel.maxIndex == "" && viewModel.fromIndex == -1 {
+                        Task {
+                            do {
+                                try await viewModel.getMaxIndex()
+                                viewModel.fromIndex = Int(viewModel.maxIndex) ?? 15
+                                return
+                            } catch {
+                                withAnimation {
+                                    viewModel.errorText = error.localizedDescription
+                                }
                             }
+                            
+                            viewModel.isErrorPopupPresented = true
                         }
-                        
-                        viewModel.isErrorPopupPresented = true
                     }
                     
                     Task {
@@ -279,17 +244,18 @@ struct EnFeedView: View {
                 .fullScreenCover(isPresented: $viewModel.isReadViewPresented, content: {
                     ReadView(
                         id: viewModel.id,
+                        userId: viewModel.userId,
                         title: viewModel.title,
                         text: viewModel.text,
                         image: viewModel.image,
                         dateCreated: viewModel.dateCreated,
                         likesCount: viewModel.likesCount,
+                        articlesRead: $viewModel.articlesRead,
                         likedPosts: $viewModel.likedPosts
                     )
                 })
                 .refreshable {
                     withAnimation {
-                        viewModel.fromIndex = 0
                         
                         viewModel.topArticlesIndexes = []
                         viewModel.topArticles = []
@@ -299,8 +265,7 @@ struct EnFeedView: View {
                     Task {
                         do {
                             try await viewModel.getTopIndexes()
-                            
-                            
+                            viewModel.fromIndex = Int(viewModel.maxIndex) ?? 15
                             return
                         } catch {
                             withAnimation {
@@ -309,6 +274,10 @@ struct EnFeedView: View {
                         }
                         
                         viewModel.isErrorPopupPresented = true
+                    }
+                    
+                    Task {
+                        try? await viewModel.loadUser()
                     }
                     
                     Task {
@@ -357,9 +326,5 @@ struct EnFeedView: View {
 }
 
 
-
-#Preview {
-    EnFeedView()
-}
 
 

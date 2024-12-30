@@ -47,7 +47,7 @@ struct TopArticleView: View {
                     .frame(width: UIScreen.main.bounds.width - 10)
                     .frame(maxHeight: 250)
                     .scaledToFit()
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: 30))
                     .shadow(radius: 2)
                 
                 VStack {
@@ -77,7 +77,7 @@ struct TopArticleView: View {
                 .frame(height: 200)
             } else {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 30)
                         .frame(width: UIScreen.main.bounds.width - 10, height: 250)
                         .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                         
@@ -86,7 +86,9 @@ struct TopArticleView: View {
             }
         }
         .onAppear {
-            fetchImage()
+            if image == nil {
+                fetchImage()
+            }
         }
     }
 }

@@ -47,6 +47,18 @@ struct RootView: View {
                         }
                 }
                 
+//                if StorageManager.shared.getLanguage() == "ru" {
+//                    Text("Hello, World")
+//                        .tabItem {
+//                            Label("", systemImage: "arrow.down.circle")
+//                        }
+//                } else {
+//                    Text("Hello, World")
+//                        .tabItem {
+//                            Label("", systemImage: "arrow.down.circle")
+//                        }
+//                }
+                
                 ProfileView(isSignInViewPresented: $isSignInViewPresented)
                     .tabItem {
                         Label("", systemImage: "person.fill")

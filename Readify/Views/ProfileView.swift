@@ -32,41 +32,46 @@ struct ProfileView: View {
                             Text(LocalizedStringKey("settingsLabel"))
                                 .font(.title)
                                 .fontWeight(.light)
+                                .fontDesign(.rounded)
                                 .frame(width: UIScreen.main.bounds.width - 32, alignment: .leading)
                             
                             if let _ = viewModel.user {
-                                Button {
-//                                    isPremiumViewPresented = true
-                                } label: {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-                                            .shadow(radius: 2)
-                                        
-                                        HStack {
-                                            Image(systemName: "crown")
-                                            
-                                            Spacer()
-                                            
-                                            Text("Premium")
-                                                .font(.title)
-                                                .fontWeight(.light)
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "crown")
-                                        }
-                                        .padding(.horizontal, 16)
-                                    }
-                                }
-                                .navigationDestination(isPresented: $isPremiumViewPresented, destination: {
-                                    
-                                })
-                                .frame(width: UIScreen.main.bounds.width - 32, height: 60)
+//                                Button {
+////                                    isPremiumViewPresented = true
+//                                    let domain = Bundle.main.bundleIdentifier!
+//                                    UserDefaults.standard.removePersistentDomain(forName: domain)
+//                                    UserDefaults.standard.synchronize()
+//                                } label: {
+//                                    ZStack {
+//                                        RoundedRectangle(cornerRadius: 20)
+//                                            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+//                                            .shadow(radius: 2)
+//                                        
+//                                        HStack {
+//                                            Image(systemName: "crown")
+//                                            
+//                                            Spacer()
+//                                            
+//                                            Text("Premium")
+//                                                .font(.title)
+//                                                .fontWeight(.light)
+//                                                .fontDesign(.rounded)
+//                                            
+//                                            Spacer()
+//                                            
+//                                            Image(systemName: "crown")
+//                                        }
+//                                        .padding(.horizontal, 16)
+//                                    }
+//                                }
+//                                .navigationDestination(isPresented: $isPremiumViewPresented, destination: {
+//                                    
+//                                })
+//                                .frame(width: UIScreen.main.bounds.width - 32, height: 60)
                                 
                                 NavigationLink(destination: NewNameView(isSuccessPopupPresented: $viewModel.isSuccessPopupPresented, successText: $viewModel.successText, userID: viewModel.user?.userId)) {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 10)
+                                        RoundedRectangle(cornerRadius: 20)
                                             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                                             .shadow(radius: 2)
                                         
@@ -78,6 +83,7 @@ struct ProfileView: View {
                                             Text(LocalizedStringKey("nameLabel"))
                                                 .font(.title3)
                                                 .fontWeight(.light)
+                                                .fontDesign(.rounded)
                                             
                                             Spacer()
                                             
@@ -89,13 +95,13 @@ struct ProfileView: View {
                                     }
                                 }
                                 .frame(width: UIScreen.main.bounds.width - 32, height: 60)
-                                .padding(.top, 20)
+                                
                                 
                                 NavigationLink {
-                                    NewPasswordView(isSuccessPopupPresented: $viewModel.isSuccessPopupPresented, successText: $viewModel.successText)
+                                    NewPasswordView(isSuccessPopupPresented: $viewModel.isSuccessPopupPresented, successText: $viewModel.successText, email: viewModel.user?.email ?? "")
                                 } label: {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 10)
+                                        RoundedRectangle(cornerRadius: 20)
                                             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                                             .shadow(radius: 2)
                                         
@@ -107,6 +113,7 @@ struct ProfileView: View {
                                             Text(LocalizedStringKey("passwordTFPlaceholder"))
                                                 .font(.title3)
                                                 .fontWeight(.light)
+                                                .fontDesign(.rounded)
                                             
                                             Spacer()
                                             
@@ -119,33 +126,66 @@ struct ProfileView: View {
                                 }
                                 .frame(width: UIScreen.main.bounds.width - 32, height: 60)
                                 
-//                                Button {
-//                                    viewModel.isLanguagePopupPresented = true
-//                                } label: {
-//                                    ZStack {
-//                                        RoundedRectangle(cornerRadius: 10)
-//                                            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-//                                            .shadow(radius: 2)
-//                                        
-//                                        HStack {
-//                                            Image(systemName: "flag.circle.fill")
-//                                                .foregroundStyle(Color.green)
-//                                                .font(.system(size: 35))
-//                                            
-//                                            Text(LocalizedStringKey("languageLabel"))
-//                                                .font(.title3)
-//                                                .fontWeight(.light)
-//                                            
-//                                            Spacer()
-//                                            
-//                                            Image(systemName: "chevron.right")
-//                                                .font(.title2)
-//                                                .foregroundStyle(Color.gray)
-//                                        }
-//                                        .padding(.horizontal, 16)
-//                                    }
-//                                }
-//                                .frame(width: UIScreen.main.bounds.width - 32, height: 60)
+                                Button {
+                                    
+                                } label: {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+                                            .shadow(radius: 2)
+                                        
+                                        HStack {
+                                            Image(systemName: "character.circle.fill")
+                                                .foregroundStyle(Color.yellow)
+                                                .font(.system(size: 35))
+                                            
+                                            Text(LocalizedStringKey("fontLabel"))
+                                                .font(.title3)
+                                                .fontWeight(.light)
+                                                .fontDesign(.rounded)
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "chevron.right")
+                                                .font(.title2)
+                                                .foregroundStyle(Color.gray)
+                                        }
+                                        .padding(.horizontal, 16)
+                                    }
+                                }
+                                .frame(width: UIScreen.main.bounds.width - 32, height: 60)
+                                
+                                Button {
+                                    viewModel.isMemorySettingsPopupPresented = true
+                                    
+                                    viewModel.getUserDefaultsSize()
+                                } label: {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+                                            .shadow(radius: 2)
+                                        
+                                        HStack {
+                                            Image(systemName: "brain.fill")
+                                                .foregroundStyle(Color.pink)
+                                                .font(.system(size: 25))
+                                                .padding(.leading, 3)
+                                            
+                                            Text(LocalizedStringKey("memorySettingsLabel"))
+                                                .font(.title3)
+                                                .fontWeight(.light)
+                                                .fontDesign(.rounded)
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "chevron.right")
+                                                .font(.title2)
+                                                .foregroundStyle(Color.gray)
+                                        }
+                                        .padding(.horizontal, 16)
+                                    }
+                                }
+                                .frame(width: UIScreen.main.bounds.width - 32, height: 60)
 
                             }
                             
@@ -154,7 +194,7 @@ struct ProfileView: View {
                                     viewModel.isSignOutDialogPresented = true
                                 } label: {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 10)
+                                        RoundedRectangle(cornerRadius: 20)
                                             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                                             .frame(width: (UIScreen.main.bounds.width - 50) / 2, height: 60)
                                             .shadow(radius: 2)
@@ -168,6 +208,7 @@ struct ProfileView: View {
                                                 .foregroundStyle(Color.red)
                                                 .fontWeight(.light)
                                                 .font(.title3)
+                                                .fontDesign(.rounded)
                                         }
                                     }
                                 }
@@ -178,7 +219,7 @@ struct ProfileView: View {
                                     viewModel.isDeleteAccDialogPresented = true
                                 } label: {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 10)
+                                        RoundedRectangle(cornerRadius: 20)
                                             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                                             .frame(width: (UIScreen.main.bounds.width - 50) / 2, height: 60)
                                             .shadow(radius: 2)
@@ -192,12 +233,13 @@ struct ProfileView: View {
                                                 .foregroundStyle(Color.red)
                                                 .fontWeight(.light)
                                                 .font(.title3)
+                                                .fontDesign(.rounded)
                                         }
                                     }
                                 }
                             }
                             .frame(width: UIScreen.main.bounds.width - 32)
-                            .padding(.top, 5)
+                            .padding(.top, 10)
                             
                             Spacer()
                         }
@@ -244,7 +286,7 @@ struct ProfileView: View {
                 }
                 .popup(isPresented: $viewModel.isErrorPopupPresented) {
                     Text(viewModel.errorText)
-                        .frame(width: UIScreen.main.bounds.width - 72)
+                        .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 16)
                         .foregroundStyle(Color.white)
@@ -303,7 +345,7 @@ struct ProfileView: View {
                 }
                 .popup(isPresented: $viewModel.isSuccessPopupPresented) {
                     Text(viewModel.successText)
-                        .frame(width: UIScreen.main.bounds.width - 72)
+                        .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 16)
                         .foregroundStyle(Color.white)
@@ -318,6 +360,15 @@ struct ProfileView: View {
                         .dragToDismiss(true)
                         .autohideIn(5)
                 }
+                .popup(isPresented: $viewModel.isMemorySettingsPopupPresented) {
+                    MemorySettingsView(sizeOfData: viewModel.sizeOfData, successText: $viewModel.successText, isSuccessPopupPresented: $viewModel.isSuccessPopupPresented)
+                        .shadow(radius: 3)
+                } customize: {
+                    $0
+                        .type(.toast)
+                        .appearFrom(.bottomSlide)
+                        .dragToDismiss(true)
+                }
             }
         }
     }
@@ -330,7 +381,7 @@ struct ProfileView: View {
 private extension ProfileView {
     var daysWithApp: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 20)
                 .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                 .frame(width: (UIScreen.main.bounds.width - 50) / 2, height: 120)
                 .shadow(radius: 2)
@@ -339,21 +390,24 @@ private extension ProfileView {
                 Text(LocalizedStringKey("youWithUsLabel"))
                     .font(.title3)
                     .foregroundStyle(Color.gray)
+                    .fontDesign(.rounded)
                 
                 Text("\(viewModel.getDays(regDate: viewModel.user?.dateCreated))")
                     .font(.title)
                     .bold()
+                    .fontDesign(.rounded)
                 
                 Text("\(viewModel.getStringOf(days: viewModel.getDays(regDate: viewModel.user?.dateCreated)))")
                     .font(.title3)
                     .foregroundStyle(Color.gray)
+                    .fontDesign(.rounded)
             }
         }
     }
     
     var articlesRead: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 20)
                 .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                 .frame(width: (UIScreen.main.bounds.width - 50) / 2, height: 120)
                 .shadow(radius: 2)
@@ -362,14 +416,17 @@ private extension ProfileView {
                 Text(LocalizedStringKey("readArticlesLabel"))
                     .font(.title3)
                     .foregroundStyle(Color.gray)
+                    .fontDesign(.rounded)
                 
                 Text("\(viewModel.user?.articlesRead ?? 0)")
                     .font(.title)
                     .bold()
+                    .fontDesign(.rounded)
                 
                 Text("\(viewModel.getStringOf(articlesRead: viewModel.user?.articlesRead ?? 0))")
                     .font(.title3)
                     .foregroundStyle(Color.gray)
+                    .fontDesign(.rounded)
             }
         }
     }

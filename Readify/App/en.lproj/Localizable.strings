@@ -22,6 +22,7 @@
 "nameChangedAlert" = "Your Name has been successfully changed";
 "passwordChangeLabel" = "Change password";
 "newPasswordTFP" = "New password";
+"oldPasswordTFP" = "Old password";
 "newPasswordAgainTFP" = "New password again";
 "passwordChangedAlert" = "Your password has been successfully changed";
 "passwordsMustMuchAlert" = "Passwords must match";
@@ -39,4 +40,10 @@
 "favoritesLabel" = "Favorites";
 "noArticlesAddedLabel" = "You haven't added any articles yet";
 "loadMore" = "Load more";
-
+"memorySettingsLabel" = "Memory and data";
+"dataInMemoryLabel" = "Memory usage";
+"clearCacheButton" = "Clear the entire cache";
+"cacheClearedAlert" = "The cache has been successfully cleared";
+"someArticlesNotFoundLabel" = "Some articles were not found";
+"fontLabel" = "Font size";
+"loadDataErrorText" = "Couldn't upload data";

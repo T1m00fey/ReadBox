@@ -11,6 +11,8 @@ struct NewPasswordView: View {
     @Binding var isSuccessPopupPresented: Bool
     @Binding var successText: String
     
+    let email: String
+    
     @StateObject var viewModel = NewPasswordViewModel()
     
     @FocusState var isFirstTFFocused: Bool
@@ -30,7 +32,7 @@ struct NewPasswordView: View {
                 
                 VStack {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 30)
                             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                             .frame(width: UIScreen.main.bounds.width - 60, height: 250)
                             .shadow(radius: 2)
@@ -44,13 +46,13 @@ struct NewPasswordView: View {
                             
                             VStack(spacing: 40) {
                                 VStack {
-                                    SecureField(LocalizedStringKey("newPasswordTFP"), text: $viewModel.newPassword)
+                                    SecureField(LocalizedStringKey("oldPasswordTFP"), text: $viewModel.oldPassword)
                                         .frame(width: UIScreen.main.bounds.width - 92)
                                         .font(.title2)
                                         .focused($isFirstTFFocused)
                                         .textInputAutocapitalization(.never)
-                                        .onChange(of: viewModel.newPassword) { _ in
-                                            if viewModel.newPassword.count > 0 {
+                                        .onChange(of: viewModel.oldPassword) { _ in
+                                            if viewModel.oldPassword.count > 0 {
                                                 viewModel.isChangeButtonEnabled()
                                             }
                                         }
@@ -61,13 +63,13 @@ struct NewPasswordView: View {
                                 }
                                 
                                 VStack {
-                                    SecureField(LocalizedStringKey("newPasswordAgainTFP"), text: $viewModel.repeatNewPassword)
+                                    SecureField(LocalizedStringKey("newPasswordTFP"), text: $viewModel.newPassword)
                                         .frame(width: UIScreen.main.bounds.width - 92)
                                         .font(.title2)
                                         .focused($isSecondTFFocused)
                                         .textInputAutocapitalization(.never)
-                                        .onChange(of: viewModel.repeatNewPassword) { _ in
-                                            if viewModel.repeatNewPassword.count > 0 {
+                                        .onChange(of: viewModel.newPassword) { _ in
+                                            if viewModel.newPassword.count > 0 {
                                                 viewModel.isChangeButtonEnabled()
                                             }
                                         }
@@ -85,34 +87,66 @@ struct NewPasswordView: View {
                     }
                     
                     Button {
-                        if viewModel.newPassword == viewModel.repeatNewPassword  {
-                            Task {
-                                do {
-                                    try await viewModel.updatePassword(to: viewModel.newPassword)
-                                    
-                                    withAnimation {
-                                        successText = NSLocalizedString("passwordChangedAlert", comment: "")
-                                    }
-                                    isSuccessPopupPresented = true
-                                    
-                                    dismiss()
-                                    return
-                                } catch {
-                                    print("Error: \(error.localizedDescription)")
-                                    
-                                    withAnimation {
-                                        viewModel.errorText = error.localizedDescription
-                                    }
+//                        if viewModel.newPassword == viewModel.repeatNewPassword  {
+//                            Task {
+//                                do {
+//                                    try await viewModel.updatePassword(to: viewModel.newPassword)
+//                                    
+//                                    withAnimation {
+//                                        successText = NSLocalizedString("passwordChangedAlert", comment: "")
+//                                    }
+//                                    isSuccessPopupPresented = true
+//                                    
+//                                    dismiss()
+//                                    return
+//                                } catch {
+//                                    print("Error: \(error.localizedDescription)")
+//                                    
+//                                    withAnimation {
+//                                        viewModel.errorText = error.localizedDescription
+//                                    }
+//                                }
+//                                
+//                                viewModel.isErrorPopupPresented = true
+//                            }
+//                        } else {
+//                            withAnimation {
+//                                viewModel.errorText = NSLocalizedString("passwordsMustMuchAlert", comment: "")
+//                            }
+//                            
+//                            viewModel.isErrorPopupPresented = true
+//                        }
+                        
+                        Task {
+                            do {
+                                try await viewModel.signIn(email: email)
+                            } catch {
+                                withAnimation {
+                                    viewModel.errorText = error.localizedDescription
+                                }
+
+                                viewModel.isErrorPopupPresented = true
+                                return
+                            }
+                            
+                            do {
+                                try await viewModel.updatePassword(to: viewModel.newPassword)
+                                
+                                withAnimation {
+                                    successText = NSLocalizedString("passwordChangedAlert", comment: "")
+                                }
+                            } catch {
+                                withAnimation {
+                                    viewModel.errorText = error.localizedDescription
                                 }
                                 
                                 viewModel.isErrorPopupPresented = true
-                            }
-                        } else {
-                            withAnimation {
-                                viewModel.errorText = NSLocalizedString("passwordsMustMuchAlert", comment: "")
+                                return
                             }
                             
-                            viewModel.isErrorPopupPresented = true
+                            isSuccessPopupPresented = true
+                            
+                            dismiss()
                         }
                     } label: {
                         HStack {
@@ -129,7 +163,7 @@ struct NewPasswordView: View {
                         }
                         .frame(width: UIScreen.main.bounds.width - 60, height: 50)
                         .background(Color(uiColor: .secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                         .font(.title2)
                         .shadow(radius: viewModel.isButtonEnable ? 2 : 0)
                     }
@@ -148,7 +182,7 @@ struct NewPasswordView: View {
             }
             .popup(isPresented: $viewModel.isErrorPopupPresented) {
                 Text(viewModel.errorText)
-                    .frame(width: UIScreen.main.bounds.width - 72)
+                    .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
                     .foregroundStyle(Color.white)
@@ -168,5 +202,5 @@ struct NewPasswordView: View {
 }
 
 #Preview {
-    NewPasswordView(isSuccessPopupPresented: .constant(false), successText: .constant(""))
+    NewPasswordView(isSuccessPopupPresented: .constant(false), successText: .constant(""), email: "")
 }
