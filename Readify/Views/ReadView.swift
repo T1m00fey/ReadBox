@@ -1,26 +1,14 @@
 //
-//  ReadView.swift
+//  TestReadView.swift
 //  Readify
 //
-//  Created by Тимофей Юдин on 10.11.2024.
+//  Created by Тимофей Юдин on 17.12.2024.
 //
 
 import SwiftUI
+import MarkdownUI
 
-struct TextPart: Hashable {
-    let content: String
-    let type: PartType
-}
-
-enum PartType {
-    case title
-    case subtitle
-    case bold
-    case bulletPoint
-    case regularText
-}
-
-final class ReadViewModel: ObservableObject {
+final class TestReadViewModel: ObservableObject {
     @Published var timeLeft = 60
     @Published var isPostLiked = false
     @Published var errorText = ""
@@ -54,30 +42,8 @@ final class ReadViewModel: ObservableObject {
         try await ArticlesManager.shared.updateLikes(at: article, likesCount: likesCount)
     }
     
-    func parseTextSections(_ text: String) -> [TextPart] {
-        // Разделяем текст по двойному переносу строки или "---"
-        let paragraphs = text.components(separatedBy: "+++").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-        var parts: [TextPart] = []
-        
-        for paragraph in paragraphs {
-            if paragraph.hasPrefix("***") {
-                let content = paragraph.replacingOccurrences(of: "***", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-                parts.append(TextPart(content: content, type: .title))
-            } else if paragraph.hasPrefix("**") {
-                let content = paragraph.replacingOccurrences(of: "**", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-                parts.append(TextPart(content: content, type: .subtitle))
-            } else if paragraph.hasPrefix("*") {
-                let content = paragraph.replacingOccurrences(of: "*", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-                parts.append(TextPart(content: content, type: .bold))
-            } else if paragraph.hasPrefix("-") {
-                let content = paragraph.replacingOccurrences(of: "-", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-                parts.append(TextPart(content: content, type: .bulletPoint))
-            } else if !paragraph.isEmpty {
-                parts.append(TextPart(content: paragraph, type: .regularText))
-            }
-        }
-        
-        return parts
+    func parseTextSections(_ text: String) -> [String] {
+        text.components(separatedBy: "+++").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
     
     func getDateCreated(regDate: Date) -> String {
@@ -145,7 +111,7 @@ final class ReadViewModel: ObservableObject {
     }
 }
 
-struct ReadView: View {
+struct TestReadView: View {
     let id: String
     let title: String
     let text: String
@@ -155,17 +121,17 @@ struct ReadView: View {
     
     @Binding var likedPosts: [String]
     
-    @StateObject var viewModel = ReadViewModel()
+    @StateObject var viewModel = TestReadViewModel()
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     @Environment(\.dismiss) var dismiss
-
     
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(uiColor: .secondarySystemBackground)
+                    .ignoresSafeArea()
                 
                 ScrollView(showsIndicators: false) {
                     
@@ -259,36 +225,7 @@ struct ReadView: View {
                         
                         VStack(alignment: .leading) {
                             ForEach(viewModel.parseTextSections(text), id: \.self) { part in
-                                
-                                switch part.type {
-                                case .title:
-                                    Text(part.content)
-                                        .font(.title)
-                                        .fontWeight(.bold)
-                                        .padding(.bottom, 8)
-                                case .subtitle:
-                                    Text(part.content)
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-                                        .fontDesign(.rounded)
-                                        .padding(.top, 20)
-                                case .bold:
-                                    Text(part.content)
-                                        .font(.body)
-                                        .fontWeight(.bold)
-                                        .padding(.top, 10)
-                                case .bulletPoint:
-                                    Text("• " + part.content)
-                                        .font(.system(size: 18))
-                                        .padding(.leading, 16)
-                                        .padding(.top, 5)
-                                case .regularText:
-                                    Text(part.content)
-                                        .font(.system(size: 19))
-                                        .padding(.top, 5)
-                                    
-                                }
-                                
+                                Markdown(part)
                             }
                         }
                         .padding(.horizontal, 16)
@@ -328,7 +265,7 @@ struct ReadView: View {
                 }
                 .popup(isPresented: $viewModel.isErrorPopupPresented) {
                     Text(viewModel.errorText)
-                        .frame(width: UIScreen.main.bounds.width - 72)
+                        .frame(width: UIScreen.main.bounds.width - 72, alignment: .leading)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 16)
                         .foregroundStyle(Color.white)
@@ -357,7 +294,7 @@ struct ReadView: View {
 //                                .foregroundStyle(Color(uiColor: .systemBackground))
 //                                .padding(.bottom, 30)
 //                                .shadow(radius: 3)
-//                            
+//
 //                            Image(systemName: "xmark")
 //                                .frame(width: UIScreen.main.bounds.width - 32, alignment: .trailing)
 //                                .onTapGesture {
