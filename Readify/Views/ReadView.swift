@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MarkdownUI
+import SwiftyMarkdown
 
 final class ReadViewModel: ObservableObject {
     @Published var timeLeft = 60
@@ -33,6 +33,20 @@ final class ReadViewModel: ObservableObject {
     
     func parseTextSections(_ text: String) -> [String] {
         text.components(separatedBy: "+++").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+    }
+    
+    func getMarkdownText(_ text: String) -> AttributedString {
+        let markdownString = SwiftyMarkdown(string: text)
+        markdownString.bold.fontSize = 30
+        markdownString.body.fontStyle = .italic
+        markdownString.body.fontSize = 30
+        markdownString.blockquotes.fontSize = 30
+        markdownString.italic.fontSize = 30
+        markdownString.code.fontSize = 30
+        markdownString.strikethrough.fontSize = 30
+        markdownString.link.fontSize = 30
+        
+        return AttributedString(markdownString.attributedString())
     }
     
     func getDateCreated(regDate: Date) -> String {
@@ -216,10 +230,11 @@ struct ReadView: View {
                         
                         VStack(alignment: .leading) {
                             ForEach(viewModel.parseTextSections(text), id: \.self) { part in
-                                Markdown(part)
-                                    .font(.title2)
-                                    .fontDesign(.rounded)
-                                    .padding(.top, 15)
+                                Text(
+                                    viewModel.getMarkdownText(part)
+                                )
+                                .fontDesign(.rounded)
+                                .padding(.top, 15)
                             }
                         }
                         .padding(.horizontal, 16)

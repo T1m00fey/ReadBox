@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C4AC6C172D11C0AE005138D5 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = C4AC6C162D11C0AE005138D5 /* MarkdownUI */; };
+		C49F1E402D2453EC004154E7 /* SwiftyMarkdown in Frameworks */ = {isa = PBXBuildFile; productRef = C49F1E3F2D2453EC004154E7 /* SwiftyMarkdown */; };
 		C4D2497B2CE4B042000C3C9A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C4D2497A2CE4B042000C3C9A /* FirebaseAnalytics */; };
 		C4D2497D2CE4B058000C3C9A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C4D2497C2CE4B058000C3C9A /* FirebaseAuth */; };
 		C4D2497F2CE4B05D000C3C9A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = C4D2497E2CE4B05D000C3C9A /* FirebaseStorage */; };
@@ -49,9 +49,9 @@
 				C4D2497B2CE4B042000C3C9A /* FirebaseAnalytics in Frameworks */,
 				C4D249812CE4B064000C3C9A /* FirebaseFirestore in Frameworks */,
 				C4D249842CE4B09C000C3C9A /* PopupView in Frameworks */,
-				C4AC6C172D11C0AE005138D5 /* MarkdownUI in Frameworks */,
 				C4D2497D2CE4B058000C3C9A /* FirebaseAuth in Frameworks */,
 				C4D2497F2CE4B05D000C3C9A /* FirebaseStorage in Frameworks */,
+				C49F1E402D2453EC004154E7 /* SwiftyMarkdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +108,7 @@
 				C4D2497E2CE4B05D000C3C9A /* FirebaseStorage */,
 				C4D249802CE4B064000C3C9A /* FirebaseFirestore */,
 				C4D249832CE4B09C000C3C9A /* PopupView */,
-				C4AC6C162D11C0AE005138D5 /* MarkdownUI */,
+				C49F1E3F2D2453EC004154E7 /* SwiftyMarkdown */,
 			);
 			productName = Readify;
 			productReference = C46A20A02CCE436600822319 /* Readify.app */;
@@ -142,7 +142,7 @@
 			packageReferences = (
 				C4D249792CE4B042000C3C9A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C4D249822CE4B09C000C3C9A /* XCRemoteSwiftPackageReference "PopupView" */,
-				C4AC6C152D11C0AE005138D5 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				C49F1E3E2D2453EC004154E7 /* XCRemoteSwiftPackageReference "SwiftyMarkdown" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C46A20A12CCE436600822319 /* Products */;
@@ -394,12 +394,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C4AC6C152D11C0AE005138D5 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+		C49F1E3E2D2453EC004154E7 /* XCRemoteSwiftPackageReference "SwiftyMarkdown" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui.git";
+			repositoryURL = "https://github.com/SimonFairbairn/SwiftyMarkdown.git";
 			requirement = {
 				kind = exactVersion;
-				version = 2.4.1;
+				version = 1.2.4;
 			};
 		};
 		C4D249792CE4B042000C3C9A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -421,10 +421,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C4AC6C162D11C0AE005138D5 /* MarkdownUI */ = {
+		C49F1E3F2D2453EC004154E7 /* SwiftyMarkdown */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C4AC6C152D11C0AE005138D5 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
-			productName = MarkdownUI;
+			package = C49F1E3E2D2453EC004154E7 /* XCRemoteSwiftPackageReference "SwiftyMarkdown" */;
+			productName = SwiftyMarkdown;
 		};
 		C4D2497A2CE4B042000C3C9A /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
